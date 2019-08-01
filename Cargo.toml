@@ -3,8 +3,10 @@ name = "gantelet"
 version = "0.1.0"
 authors = ["Loïc Grobol <loic.grobol@gmail.com>"]
 edition = "2018"
-description = "Train GloVe word embeddings easily"
+description = "A rusty implementation of GloVe"
 license = "MIT"
+homepage = "https://github.com/LoicGrobol/gantelet"
+
 
 [dependencies]
 clap = "~2.33.0"
