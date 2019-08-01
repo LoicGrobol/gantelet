@@ -7,3 +7,9 @@ description = "Train GloVe word embeddings easily"
 license = "MIT"
 
 [dependencies]
+clap = "~2.33.0"
+fasthash = "0.4"
+
+[[bin]]
+name = "vocab-count"
+path = "src/vocab_count.rs"
