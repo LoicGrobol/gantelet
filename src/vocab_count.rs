@@ -32,23 +32,52 @@ fn main() {
         std::fs::File::open(matches.value_of("input-file").unwrap())
             .expect("Can't open source file"),
     );
-    let counts = get_counts(input_reader);
+    let mut counts = get_counts(input_reader);
     let mut output_writer = std::io::BufWriter::new(
         std::fs::File::create(matches.value_of("output-file").unwrap())
             .expect("Can't open target file"),
     );
-    for (word, count) in counts.iter(){
-        writeln!(&mut output_writer, "{} {}", word, count.to_string()).expect("Couldn't write to output");
+
+    counts = filter_counts(
+        counts,
+        matches.value_of("min-count").map(|s| s.parse().unwrap()),
+        matches.value_of("max-vocab").map(|s| s.parse().unwrap()),
+    );
+    for (word, count) in counts.iter() {
+        writeln!(&mut output_writer, "{} {}", word, count.to_string())
+            .expect("Couldn't write to output");
     }
 }
 
-
 fn get_counts<R: std::io::BufRead>(input: R) -> HashMap<String, u64, BuildHasherDefault<Hasher64>> {
     let mut counts = HashMap::<String, u64, BuildHasherDefault<Hasher64>>::default();
-    for line in input.lines(){
-        for word in line.unwrap().split_whitespace(){
+    for line in input.lines() {
+        for word in line.unwrap().split_whitespace() {
             *counts.entry(word.to_string()).or_insert(0) += 1;
         }
     }
     counts
+}
+
+fn filter_counts<
+    U: std::cmp::Eq + std::hash::Hash,
+    T: std::hash::BuildHasher + std::default::Default,
+>(
+    mut counts: HashMap<U, u64, T>,
+    min_count: Option<u64>,
+    max_vocab: Option<usize>,
+) -> HashMap<U, u64, T> {
+    match min_count {
+        Some(n) => counts.retain(|_, &mut v| v >= n),
+        _ => (),
+    }
+    match max_vocab {
+        Some(n) if n < counts.len() => {
+            let mut counts_vec: Vec<(U, u64)> = counts.into_iter().collect();
+            counts_vec.sort_unstable_by(|a, b| b.1.cmp(&a.1));
+            counts = counts_vec.drain(..n).collect();
+        }
+        _ => (),
+    }
+    return counts;
 }
