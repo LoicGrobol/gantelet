@@ -6,17 +6,13 @@ use std::io::Write as IoWrite;
 use fasthash;
 use fasthash::xx::Hasher64;
 
+use indicatif;
+
 fn main() {
     let matches = clap::App::new(clap::crate_name!())
         .version(clap::crate_version!())
         .author(clap::crate_authors!("\n"))
         .about("Tool to extract unigram counts")
-        .arg(clap::Arg::with_name("verbose")
-            .long("verbose")
-            .takes_value(true)
-            .default_value("2")
-            .possible_values(&["0", "1", "2"])
-            .help("Sets the level of verbosity"))
         .arg(clap::Arg::with_name("min-count")
             .long("min-count")
             .takes_value(true)
@@ -51,10 +47,15 @@ fn main() {
 
 fn get_counts<R: std::io::BufRead>(input: R) -> HashMap<String, u64, BuildHasherDefault<Hasher64>> {
     let mut counts = HashMap::<String, u64, BuildHasherDefault<Hasher64>>::default();
+    let pb = indicatif::ProgressBar::new_spinner();
+    pb.set_draw_target(indicatif::ProgressDrawTarget::stderr());
+    let mut n_words = 0;
     for line in input.lines() {
         for word in line.unwrap().split_whitespace() {
             *counts.entry(word.to_string()).or_insert(0) += 1;
+            n_words += 1
         }
+        pb.set_message(&format!("Read {} words", n_words));
     }
     counts
 }

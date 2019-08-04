@@ -11,6 +11,7 @@ homepage = "https://github.com/LoicGrobol/gantelet"
 [dependencies]
 clap = "~2.33.0"
 fasthash = "0.4"
+indicatif = "0"
 
 [[bin]]
 name = "vocab-count"
