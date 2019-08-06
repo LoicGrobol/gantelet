@@ -53,7 +53,10 @@ fn get_counts<R: std::io::BufRead>(input: R) -> HashMap<String, u64, BuildHasher
     let mut mega_words: u64 = 0;
     for line in input.lines() {
         for word in line.unwrap().split_whitespace() {
-            *counts.entry(word.to_string()).or_insert(0) += 1;
+            match counts.get_mut(word) {
+                Some(n) => {*n += 1},
+                _ => {counts.insert(word.to_string(), 0);},
+            };
             n_words += 1;
             if n_words == 1000000 {
                 mega_words += 1;
