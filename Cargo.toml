@@ -19,4 +19,4 @@ path = "src/vocab_count.rs"
 
 [[bin]]
 name = "cooccur"
-path = "src/coccur.rs"
+path = "src/cooccur.rs"
