@@ -1,6 +1,6 @@
 [package]
 name = "gantelet"
-version = "0.1.2"
+version = "0.2.0"
 authors = ["Loïc Grobol <loic.grobol@gmail.com>"]
 edition = "2018"
 description = "A rusty implementation of GloVe"
