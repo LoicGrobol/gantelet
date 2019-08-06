@@ -16,3 +16,7 @@ indicatif = "0"
 [[bin]]
 name = "vocab-count"
 path = "src/vocab_count.rs"
+
+[[bin]]
+name = "cooccur"
+path = "src/coccur.rs"
