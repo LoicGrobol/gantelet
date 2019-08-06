@@ -49,13 +49,18 @@ fn get_counts<R: std::io::BufRead>(input: R) -> HashMap<String, u64, BuildHasher
     let mut counts = HashMap::<String, u64, BuildHasherDefault<Hasher64>>::default();
     let pb = indicatif::ProgressBar::new_spinner();
     pb.set_draw_target(indicatif::ProgressDrawTarget::stderr());
-    let mut n_words = 0;
+    let mut n_words: u32 = 0;
+    let mut mega_words: u64 = 0;
     for line in input.lines() {
         for word in line.unwrap().split_whitespace() {
             *counts.entry(word.to_string()).or_insert(0) += 1;
-            n_words += 1
+            n_words += 1;
+            if n_words == 1000000 {
+                mega_words += 1;
+                pb.set_message(&format!("Read {} Mwords", mega_words));
+                n_words = 0;
+            }
         }
-        pb.set_message(&format!("Read {} words", n_words));
     }
     counts
 }
